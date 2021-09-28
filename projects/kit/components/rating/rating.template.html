@@ -1,0 +1,17 @@
+<div
+    class="tui-rating"
+    [class.tui-rating--disable]="tuiRateDisable"
+    [class.tui-rating--readonly]="tuiRateReadonly"
+>
+    <div *tuiRepeatTimes="let index of tuiRateMax">
+        <tui-svg
+            class="tui-rating__step"
+            [style.color]="tuiRateColor"
+            (mouseleave)="tuiRateOnBlur(state.step)"
+            (click)="tuiRateSetActive(state.step)"
+            (mouseenter)="tuiRateOnFocus(state.step)"
+            [src]="state.selected > index ? this.tuiRateSelectedIcon : this.tuiRateEmptyIcon"
+            *ngIf="{ step: index + 1, selected: focusedRate || currentRate } as state"
+        ></tui-svg>
+    </div>
+</div>

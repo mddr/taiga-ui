@@ -44,6 +44,7 @@ export * from '@taiga-ui/kit/components/radio-block';
 export * from '@taiga-ui/kit/components/radio-group';
 export * from '@taiga-ui/kit/components/radio-labeled';
 export * from '@taiga-ui/kit/components/radio-list';
+export * from '@taiga-ui/kit/components/rating';
 export * from '@taiga-ui/kit/components/range';
 export * from '@taiga-ui/kit/components/select';
 export * from '@taiga-ui/kit/components/select-option';
