@@ -21,9 +21,9 @@ export class TuiSheetsHostComponent {
         @Inject(TuiSheetService) readonly service: TuiSheetService,
     ) {}
 
-    close(item: TuiSheet<unknown>) {
-        if (item.closeable) {
-            item.$implicit.complete();
+    close({closeable, $implicit}: TuiSheet<unknown>) {
+        if (closeable) {
+            $implicit.complete();
         }
     }
 }
