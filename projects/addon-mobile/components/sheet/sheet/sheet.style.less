@@ -1,9 +1,12 @@
 @import 'taiga-ui-local';
 
 :host {
-    .fullsize(fixed);
     .scrollbar-hidden();
-    top: 1rem;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100vh;
     border-radius: 0.75rem 0.75rem 0 0;
     overflow-y: auto;
     overflow-x: hidden;
