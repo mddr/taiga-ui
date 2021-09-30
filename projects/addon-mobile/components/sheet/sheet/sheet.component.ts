@@ -12,11 +12,12 @@ import {
     ViewChild,
     ViewChildren,
 } from '@angular/core';
+import {WINDOW} from '@ng-web-apis/common';
 import {EMPTY_QUERY, tuiPure, tuiZonefull, typedFromEvent} from '@taiga-ui/cdk';
 import {tuiSlideInTop, tuiZonefulMap} from '@taiga-ui/core';
 import {asCallable} from '@tinkoff/ng-event-plugins';
 import {merge, Observable} from 'rxjs';
-import {filter} from 'rxjs/operators';
+import {filter, map, startWith} from 'rxjs/operators';
 import {TuiSheet} from '../sheet';
 import {TUI_SHEET_CLOSE} from './sheet-heading/sheet-heading.component';
 import {TUI_SHEET_PROVIDERS, TUI_SHEET_SCROLL} from './sheet.providers';
@@ -59,6 +60,15 @@ export class TuiSheetComponent<T> implements AfterViewInit {
         ),
     );
 
+    @HostBinding('$.style.height.px')
+    @HostListener('$.style.height.px')
+    readonly height$ = asCallable(
+        typedFromEvent(this.windowRef, 'resize').pipe(
+            startWith(null),
+            map(() => this.height),
+        ),
+    );
+
     readonly stuck$ = this.scroll$.pipe(
         tuiZonefulMap(scrollTop => scrollTop > this.contentTop, this.ngZone),
     );
@@ -76,6 +86,7 @@ export class TuiSheetComponent<T> implements AfterViewInit {
         @Inject(TUI_SHEET_SCROLL) private readonly scroll$: Observable<number>,
         @Inject(ElementRef) private readonly elementRef: ElementRef<HTMLElement>,
         @Inject(NgZone) private readonly ngZone: NgZone,
+        @Inject(WINDOW) private readonly windowRef: Window,
     ) {}
 
     get stops(): readonly number[] {
@@ -98,6 +109,10 @@ export class TuiSheetComponent<T> implements AfterViewInit {
 
     scrollTo(top: number = this.sheetTop) {
         this.elementRef.nativeElement.scrollTo({top, behavior: 'smooth'});
+    }
+
+    private get height(): number {
+        return this.windowRef.innerHeight - this.elementRef.nativeElement.offsetTop;
     }
 
     private get contentTop(): number {

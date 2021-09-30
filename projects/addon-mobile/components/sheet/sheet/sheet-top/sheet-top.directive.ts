@@ -2,7 +2,6 @@ import {Directive, ElementRef, Inject, Input, NgZone} from '@angular/core';
 import {clamp, tuiDefaultProp} from '@taiga-ui/cdk';
 import {tuiZonefulMap} from '@taiga-ui/core';
 import {Observable} from 'rxjs';
-import {filter} from 'rxjs/operators';
 import {TUI_SHEET_SCROLL} from '../sheet.providers';
 
 // So that borders get rounded when image is visible for at least 10px
@@ -15,6 +14,8 @@ const OFFSET = 10;
         '($.style.transform)': 'transform$',
         '[$.class._rounded]': 'rounded$',
         '($.class._rounded)': 'rounded$',
+        '[$.class._clickthrough]': 'clickthrough$',
+        '($.class._clickthrough)': 'clickthrough$',
     },
 })
 export class TuiSheetTopDirective {
@@ -23,12 +24,14 @@ export class TuiSheetTopDirective {
     stop = 0;
 
     readonly transform$ = this.scroll$.pipe(
-        filter(() => !!this.stop),
         tuiZonefulMap(y => `translate3d(0, ${this.getTransform(y)}%, 0)`, this.ngZone),
     );
 
+    readonly clickthrough$ = this.scroll$.pipe(
+        tuiZonefulMap(y => !!this.getTransform(y), this.ngZone),
+    );
+
     readonly rounded$ = this.scroll$.pipe(
-        filter(() => !!this.stop),
         tuiZonefulMap(y => y < this.stop + OFFSET, this.ngZone),
     );
 
@@ -42,6 +45,6 @@ export class TuiSheetTopDirective {
         const value = scrollTop - this.stop;
         const total = this.elementRef.nativeElement.offsetTop - this.stop;
 
-        return clamp(100 - (value / total) * 100, 0, 100);
+        return this.stop && clamp(100 - (value / total) * 100, 0, 100);
     }
 }
