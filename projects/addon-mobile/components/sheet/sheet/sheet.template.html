@@ -29,7 +29,11 @@
     </header>
     <section #content class="t-sheet" [class.t-sheet_stuck]="stuck$ | async">
         <tui-sheet-bar [stop]="stops[0] || 0">
-            <button class="t-bar" (click)="scrollTo(stops[1])"></button>
+            <button
+                class="t-bar"
+                [title]="moreWord$ | async"
+                (click)="scrollTo(stops[1])"
+            ></button>
         </tui-sheet-bar>
         <div
             polymorpheus-outlet

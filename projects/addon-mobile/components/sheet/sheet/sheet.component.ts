@@ -15,9 +15,10 @@ import {
 import {WINDOW} from '@ng-web-apis/common';
 import {EMPTY_QUERY, tuiPure, tuiZonefull, typedFromEvent} from '@taiga-ui/cdk';
 import {tuiSlideInTop, tuiZonefulMap} from '@taiga-ui/core';
+import {TUI_MORE_WORD} from '@taiga-ui/kit';
 import {asCallable} from '@tinkoff/ng-event-plugins';
-import {merge, Observable} from 'rxjs';
-import {filter, map, startWith} from 'rxjs/operators';
+import {fromEvent, merge, Observable} from 'rxjs';
+import {filter, map, mapTo, startWith} from 'rxjs/operators';
 import {TuiSheet} from '../sheet';
 import {TUI_SHEET_CLOSE} from './sheet-heading/sheet-heading.component';
 import {TUI_SHEET_PROVIDERS, TUI_SHEET_SCROLL} from './sheet.providers';
@@ -70,7 +71,7 @@ export class TuiSheetComponent<T> implements AfterViewInit {
     );
 
     readonly stuck$ = this.scroll$.pipe(
-        tuiZonefulMap(scrollTop => scrollTop > this.contentTop, this.ngZone),
+        tuiZonefulMap(scrollTop => scrollTop > this.contentTop + 1, this.ngZone),
     );
 
     @ViewChild('sheet')
@@ -87,7 +88,21 @@ export class TuiSheetComponent<T> implements AfterViewInit {
         @Inject(ElementRef) private readonly elementRef: ElementRef<HTMLElement>,
         @Inject(NgZone) private readonly ngZone: NgZone,
         @Inject(WINDOW) private readonly windowRef: Window,
-    ) {}
+        @Inject(TUI_MORE_WORD) readonly moreWord$: Observable<string>,
+    ) {
+        merge(
+            fromEvent(this.windowRef, 'touchstart', {capture: true, passive: true}).pipe(
+                filter(({target}) => !!this.sheet?.nativeElement.contains(target as Element)),
+                mapTo(false),
+            ),
+            fromEvent(this.windowRef, 'touchend', {capture: true, passive: true}).pipe(
+                filter(({target}) => !!this.sheet?.nativeElement.contains(target as Element)),
+                mapTo(true),
+            ),
+        ).subscribe(enabled => {
+            this.elementRef.nativeElement.classList.toggle('_clickthrough', enabled);
+        });
+    }
 
     get stops(): readonly number[] {
         return this.getStops(this.stopsRefs);
@@ -103,8 +118,8 @@ export class TuiSheetComponent<T> implements AfterViewInit {
         this.elementRef.nativeElement.scrollTop = stops[this.item.initial];
     }
 
-    onTouched(clickthrough: boolean) {
-        this.clickthrough = clickthrough;
+    onTouched(_clickthrough: boolean) {
+        // this.clickthrough = clickthrough;
     }
 
     scrollTo(top: number = this.sheetTop) {
