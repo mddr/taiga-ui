@@ -30,7 +30,6 @@
 
 .t-wrapper {
     border-radius: 0.75rem 0.75rem 0 0;
-    pointer-events: auto;
     scroll-snap-stop: always;
     scroll-snap-align: start;
 
@@ -46,6 +45,10 @@
     pointer-events: auto;
     border-radius: 0.8rem 0.8rem 0 0;
     overflow: hidden;
+
+    &[style]:not([style="transform: translate3d(0px, 0%, 0px);"]) {
+        pointer-events: none;
+    }
 }
 
 .t-image {
@@ -60,6 +63,7 @@
     box-sizing: border-box;
     scroll-snap-stop: always;
     scroll-snap-align: start;
+    pointer-events: auto;
 
     .t-top:not(._rounded) ~ & tui-sheet-bar {
         border-radius: 0;
