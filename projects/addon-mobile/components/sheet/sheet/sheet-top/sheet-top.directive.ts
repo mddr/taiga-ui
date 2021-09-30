@@ -28,7 +28,7 @@ export class TuiSheetTopDirective {
     );
 
     readonly clickthrough$ = this.scroll$.pipe(
-        tuiZonefulMap(y => !!this.getTransform(y), this.ngZone),
+        tuiZonefulMap(y => !!Math.round(this.getTransform(y)), this.ngZone),
     );
 
     readonly rounded$ = this.scroll$.pipe(

@@ -14,7 +14,7 @@ export class TuiSheetExample3 {
     open = false;
 
     readonly options: Partial<TuiSheetOptions> = {
-        stops: ['21rem', '25rem'],
+        stops: ['20rem', '24rem'],
         image:
             'https://www.vintagemovieposters.co.uk/wp-content/uploads/2020/10/IMG_0323-1024x756.jpeg',
     };
