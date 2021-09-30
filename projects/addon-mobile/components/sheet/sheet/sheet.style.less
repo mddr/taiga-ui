@@ -15,7 +15,7 @@
 }
 
 .t-bumpers {
-    height: 100vh;
+    height: calc(100% + 1rem);
 
     :host(._closeable) & {
         scroll-snap-stop: always;
@@ -46,10 +46,6 @@
     pointer-events: auto;
     border-radius: 0.8rem 0.8rem 0 0;
     overflow: hidden;
-
-    &_animated {
-        transform: translate3d(0, 100%, 0);
-    }
 }
 
 .t-image {
