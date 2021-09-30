@@ -65,7 +65,7 @@ export class TuiSheetComponent<T> implements AfterViewInit {
     readonly height$ = asCallable(
         typedFromEvent(this.windowRef, 'resize').pipe(
             startWith(null),
-            map(() => this.height),
+            map(() => this.windowRef.innerHeight - 16),
         ),
     );
 
@@ -109,10 +109,6 @@ export class TuiSheetComponent<T> implements AfterViewInit {
 
     scrollTo(top: number = this.sheetTop) {
         this.elementRef.nativeElement.scrollTo({top, behavior: 'smooth'});
-    }
-
-    private get height(): number {
-        return this.windowRef.innerHeight - this.elementRef.nativeElement.offsetTop;
     }
 
     private get contentTop(): number {
