@@ -1,20 +1,16 @@
-<div class="t-bumpers">
+<div
+    class="t-bumpers"
+    (touchstart)="onTouched(true)"
+    (touchend)="onTouched(false)"
+>
     <div
         *ngFor="let stop of item.stops"
         #stops
         class="t-bumper"
-        [style.height]="stop"
-        [style.marginBottom]="'-' + stop"
-        [style.scrollMarginTop]="'-' +stop"
+        [style.marginTop]="stop"
     ></div>
 </div>
-<div
-    #sheet
-    class="t-wrapper"
-    [class.t-wrapper_shadow]="!item.image"
-    (touchstart)="onTouched(false)"
-    (touchend)="onTouched(true)"
->
+<div #sheet class="t-wrapper" [class.t-wrapper_shadow]="!item.image">
     <header
         *ngIf="item.image"
         polymorpheus-outlet
