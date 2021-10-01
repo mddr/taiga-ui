@@ -20,7 +20,7 @@ import {asCallable} from '@tinkoff/ng-event-plugins';
 import {fromEvent, merge, Observable} from 'rxjs';
 import {filter, map, mapTo, startWith} from 'rxjs/operators';
 import {TuiSheet} from '../sheet';
-import {TUI_SHEET_CLOSE} from './sheet-heading/sheet-heading.component';
+import {TUI_SHEET_CLOSE, TUI_SHEET_ID} from './sheet-heading/sheet-heading.component';
 import {TUI_SHEET_PROVIDERS, TUI_SHEET_SCROLL} from './sheet.providers';
 
 // So that overlay appears a little ahead of time
@@ -33,6 +33,8 @@ const OFFSET = 16;
     providers: TUI_SHEET_PROVIDERS,
     animations: [tuiSlideInTop],
     host: {
+        role: 'dialog',
+        '[attr.aria-labelledby]': 'id',
         '[class._closeable]': 'item.closeable',
     },
 })
@@ -51,6 +53,8 @@ export class TuiSheetComponent<T> implements AfterViewInit {
 
     @HostBinding('class._clickthrough')
     clickthrough = true;
+
+    id = '';
 
     @HostBinding('$.class._overlay')
     @HostListener('$.class._overlay')
@@ -92,11 +96,15 @@ export class TuiSheetComponent<T> implements AfterViewInit {
     ) {
         merge(
             fromEvent(this.windowRef, 'touchstart', {capture: true, passive: true}).pipe(
-                filter(({target}) => !!this.sheet?.nativeElement.contains(target as Element)),
+                filter(
+                    ({target}) => !!this.sheet?.nativeElement.contains(target as Element),
+                ),
                 mapTo(false),
             ),
             fromEvent(this.windowRef, 'touchend', {capture: true, passive: true}).pipe(
-                filter(({target}) => !!this.sheet?.nativeElement.contains(target as Element)),
+                filter(
+                    ({target}) => !!this.sheet?.nativeElement.contains(target as Element),
+                ),
                 mapTo(true),
             ),
         ).subscribe(enabled => {
@@ -116,6 +124,11 @@ export class TuiSheetComponent<T> implements AfterViewInit {
         const stops = [...this.stops, this.sheetTop, this.contentTop];
 
         this.elementRef.nativeElement.scrollTop = stops[this.item.initial];
+    }
+
+    @HostListener(TUI_SHEET_ID, ['$event.detail'])
+    onId(id: string) {
+        this.id = id;
     }
 
     onTouched(_clickthrough: boolean) {
