@@ -114,8 +114,14 @@ export class TuiSheetComponent<T> implements AfterViewInit {
         this.id = id;
     }
 
-    onTouched(clickthrough: boolean) {
+    onTouched(clickthrough: boolean, id: number) {
         this.clickthrough = clickthrough;
+
+        if (clickthrough) {
+            this.elementRef.nativeElement.releasePointerCapture(id);
+        } else {
+            this.elementRef.nativeElement.setPointerCapture(id);
+        }
     }
 
     scrollTo(top: number = this.sheetTop) {

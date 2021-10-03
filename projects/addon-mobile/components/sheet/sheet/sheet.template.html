@@ -10,8 +10,8 @@
     #sheet
     class="t-wrapper"
     [class.t-wrapper_shadow]="!item.image"
-    (pointerenter)="onTouched(false)"
-    (touchend)="onTouched(true)"
+    (pointerdown)="onTouched(false, $event.pointerId)"
+    (pointerup)="onTouched(true, $event.pointerId)"
 >
     <header
         *ngIf="item.image"
