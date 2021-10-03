@@ -52,7 +52,7 @@ export class TuiSheetComponent<T> implements AfterViewInit {
     );
 
     @HostBinding('class._clickthrough')
-    clickthrough = false;
+    clickthrough = true;
 
     id = '';
 
