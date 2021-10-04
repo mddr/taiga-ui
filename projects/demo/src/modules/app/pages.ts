@@ -849,6 +849,12 @@ export const pages: TuiDocPages = [
     // Tools
     {
         section: $localize`Tools`,
+        title: 'Animations',
+        keywords: 'animation, animations, анимация, анимации',
+        route: '/animations',
+    },
+    {
+        section: $localize`Tools`,
         title: $localize`Decorators`,
         subPages: [
             {

@@ -1,0 +1,14 @@
+<ng-container *tuiLet="isShown$ | async as isOpen">
+    <button
+        tuiButton
+        appearance="outline"
+        class="button"
+        (click)="isShown$.next(!isOpen)"
+    >
+        {{isOpen ? 'Hide me' : 'Show opening crawl'}}
+    </button>
+
+    <div *ngIf="isOpen" class="container" [@tuiHeightCollapse]="animation">
+        A long time ago in a galaxy far, far away....
+    </div>
+</ng-container>

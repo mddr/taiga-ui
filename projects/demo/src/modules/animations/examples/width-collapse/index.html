@@ -1,0 +1,13 @@
+<ng-container *tuiLet="isShown$ | async as isOpen">
+    <button
+        tuiButton
+        appearance="outline"
+        class="switch"
+        size="xs"
+        (click)="isShown$.next(!isOpen)"
+    >
+        {{isOpen ? 'ON' : 'OFF'}}
+    </button>
+
+    <div *ngIf="isOpen" class="plasma" [@tuiWidthCollapse]="animation"></div>
+</ng-container>

@@ -1,0 +1,40 @@
+<tui-doc-page
+    i18n-header
+    header="Animations"
+    package="CORE"
+    path="core/animations"
+>
+    <ng-template pageTab>
+        <label tuiLabel label="Speed of animations:">
+            <tui-slider
+                [(ngModel)]="speed"
+                [segments]="5"
+                [pluralize]="['ms', 'ms', 'ms']"
+                [min]="0"
+                [max]="3000"
+            ></tui-slider>
+        </label>
+
+        <tui-doc-example
+            id="tuiHeightCollapse"
+            i18n-heading
+            heading="tuiHeightCollapse"
+            [content]="heightCollapseExample"
+        >
+            <tui-height-collapse-example
+                [speed]="speed"
+            ></tui-height-collapse-example>
+        </tui-doc-example>
+
+        <tui-doc-example
+            id="tuiWidthCollapse"
+            i18n-heading
+            heading="tuiWidthCollapse"
+            [content]="widthCollapseExample"
+        >
+            <tui-width-collapse-example
+                [speed]="speed"
+            ></tui-width-collapse-example>
+        </tui-doc-example>
+    </ng-template>
+</tui-doc-page>
