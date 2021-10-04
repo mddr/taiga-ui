@@ -13,12 +13,25 @@ import {
     ViewChildren,
 } from '@angular/core';
 import {WINDOW} from '@ng-web-apis/common';
-import {EMPTY_QUERY, tuiPure, tuiZonefull, typedFromEvent} from '@taiga-ui/cdk';
+import {
+    EMPTY_QUERY,
+    TUI_IS_IOS,
+    tuiPure,
+    tuiZonefull,
+    typedFromEvent,
+} from '@taiga-ui/cdk';
 import {tuiSlideInTop} from '@taiga-ui/core';
 import {TUI_MORE_WORD} from '@taiga-ui/kit';
 import {asCallable} from '@tinkoff/ng-event-plugins';
 import {merge, Observable} from 'rxjs';
-import {filter, map, startWith} from 'rxjs/operators';
+import {
+    distinctUntilChanged,
+    filter,
+    map,
+    skipWhile,
+    startWith,
+    tap,
+} from 'rxjs/operators';
 import {TuiSheet} from '../sheet';
 import {TUI_SHEET_CLOSE, TUI_SHEET_ID} from './sheet-heading/sheet-heading.component';
 import {TUI_SHEET_PROVIDERS, TUI_SHEET_SCROLL} from './sheet.providers';
@@ -26,6 +39,7 @@ import {TUI_SHEET_PROVIDERS, TUI_SHEET_SCROLL} from './sheet.providers';
 // Per design top margin
 const OFFSET = 16;
 
+// @dynamic
 @Component({
     selector: 'tui-sheet',
     templateUrl: 'sheet.template.html',
@@ -67,7 +81,7 @@ export class TuiSheetComponent<T> implements AfterViewInit {
 
     @HostBinding('$.class._stuck')
     @HostListener('$.class._stuck')
-    readonly stuck$ = this.scroll$.pipe(map(y => y > this.contentTop + 1));
+    readonly stuck$ = this.safariHack();
 
     @ViewChild('sheet')
     private readonly sheet?: ElementRef<HTMLElement>;
@@ -83,6 +97,7 @@ export class TuiSheetComponent<T> implements AfterViewInit {
         @Inject(ElementRef) private readonly elementRef: ElementRef<HTMLElement>,
         @Inject(NgZone) private readonly ngZone: NgZone,
         @Inject(WINDOW) private readonly windowRef: Window,
+        @Inject(TUI_IS_IOS) private readonly isIos: boolean,
         @Inject(TUI_MORE_WORD) readonly moreWord$: Observable<string>,
     ) {}
 
@@ -142,5 +157,27 @@ export class TuiSheetComponent<T> implements AfterViewInit {
             .map(
                 ({nativeElement}) => nativeElement.offsetTop + nativeElement.clientHeight,
             );
+    }
+
+    // Safari...
+    private safariHack(): Observable<boolean> {
+        return !this.isIos
+            ? this.scroll$.pipe(map(y => y > this.contentTop + 1))
+            : this.scroll$.pipe(
+                  map(y => y > this.contentTop + 1),
+                  distinctUntilChanged(),
+                  skipWhile(v => !v),
+                  tap(stuck => !stuck && this.clickthrough && this.forceStop()),
+              );
+    }
+
+    // Safari!!! (╯°□°)╯︵ ┻━┻
+    private forceStop() {
+        this.elementRef.nativeElement.style.overflow = 'hidden';
+        this.elementRef.nativeElement.scrollTop = this.contentTop;
+
+        setTimeout(() => {
+            this.elementRef.nativeElement.style.overflow = '';
+        });
     }
 }
