@@ -2,6 +2,7 @@ import {Clipboard} from '@angular/cdk/clipboard';
 import {
     Attribute,
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     Inject,
     Input,
@@ -15,6 +16,7 @@ import {PolymorpheusContent} from '@tinkoff/ng-polymorpheus';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {CodeEditor} from '../../interfaces/code-editor';
+import {TuiDocExample, TuiDocExampleProcessed} from '../../interfaces/page';
 import {TUI_DOC_CODE_EDITOR} from '../../tokens/code-editor';
 import {TUI_DOC_EXAMPLE_CONTENT_PROCESSOR} from '../../tokens/example-content-processor';
 import {TUI_DOC_EXAMPLE_TEXTS} from '../../tokens/i18n';
@@ -35,8 +37,24 @@ export class TuiDocExampleComponent {
     description: PolymorpheusContent = '';
 
     @Input()
-    set content(content: Record<string, string>) {
-        this.processedContent = this.processContent(content);
+    set content(content: TuiDocExample) {
+        this.prepareContent(content).then(() => this.cd.detectChanges());
+    }
+
+    private async prepareContent(content: TuiDocExample): Promise<void> {
+        const processedContent: TuiDocExampleProcessed = {};
+
+        for (const [key, value] of Object.entries(content)) {
+            if (value instanceof Promise) {
+                processedContent[key] = (
+                    await (value as Promise<{default: string}>)
+                ).default;
+            } else {
+                processedContent[key] = value;
+            }
+        }
+
+        this.processedContent = this.processContent(processedContent);
     }
 
     @Input()
@@ -44,7 +62,7 @@ export class TuiDocExampleComponent {
 
     activeItemIndex = 0;
 
-    processedContent: Record<string, string> = {};
+    processedContent: TuiDocExampleProcessed = {};
 
     readonly defaultTab = this.texts[0];
 
@@ -64,9 +82,10 @@ export class TuiDocExampleComponent {
         readonly codeEditor: CodeEditor | null,
         @Inject(TUI_DOC_EXAMPLE_CONTENT_PROCESSOR)
         private readonly processContent: TuiHandler<
-            Record<string, string>,
-            Record<string, string>
+            TuiDocExample,
+            TuiDocExampleProcessed
         >,
+        private readonly cd: ChangeDetectorRef,
     ) {}
 
     get activeItem(): string {
@@ -105,7 +124,7 @@ export class TuiDocExampleComponent {
     }
 
     @tuiPure
-    private getTabs(content: Record<string, string>): readonly string[] {
+    private getTabs(content: TuiDocExampleProcessed): readonly string[] {
         return [this.defaultTab, ...Object.keys(content)];
     }
 }

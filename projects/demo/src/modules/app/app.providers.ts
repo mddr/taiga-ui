@@ -9,6 +9,7 @@ import {
     TUI_DOC_SEE_ALSO,
     TUI_DOC_SOURCE_CODE,
     TUI_DOC_TITLE,
+    TuiDocExampleProcessed,
     TuiDocSourceCodePathOptions,
 } from '@taiga-ui/addon-doc';
 import {TUI_IS_CYPRESS} from '@taiga-ui/cdk';
@@ -18,7 +19,6 @@ import {NgDompurifySanitizer} from '@tinkoff/ng-dompurify';
 import {HIGHLIGHT_OPTIONS} from 'ngx-highlightjs';
 import {TUI_DOC_EXAMPLE_CONTENT_PROCESSOR} from '../../../../addon-doc/src/tokens/example-content-processor';
 import {PROMPT_PROVIDER} from '../customization/dialogs/examples/prompt/prompt.component';
-import {FrontEndExample} from '../interfaces/front-end-example';
 import {SEE_ALSO_GROUPS} from './app.const';
 import {LOGO_CONTENT} from './logo/logo.component';
 import {pages} from './pages';
@@ -42,11 +42,13 @@ export const HIGHLIGHT_OPTIONS_VALUE = {
     },
 };
 
-export function exampleContentProcessor(content: FrontEndExample): FrontEndExample {
+export function exampleContentProcessor(
+    content: TuiDocExampleProcessed,
+): TuiDocExampleProcessed {
     return processLess(processTs(content));
 }
 
-function processTs(content: FrontEndExample): FrontEndExample {
+function processTs(content: TuiDocExampleProcessed): TuiDocExampleProcessed {
     if (!content.TypeScript) {
         return content;
     }
@@ -70,7 +72,7 @@ function processTs(content: FrontEndExample): FrontEndExample {
     };
 }
 
-function processLess(content: FrontEndExample): FrontEndExample {
+function processLess(content: TuiDocExampleProcessed): TuiDocExampleProcessed {
     return content.LESS
         ? {
               ...content,

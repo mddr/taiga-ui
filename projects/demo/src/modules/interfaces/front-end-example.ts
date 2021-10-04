@@ -1,5 +1,6 @@
-export interface FrontEndExample {
-    TypeScript?: string;
-    HTML?: string;
-    LESS?: string;
-}
+import {TuiDocExample} from '@taiga-ui/addon-doc';
+
+/**
+ * @deprecated - use TuiDocExample directly
+ */
+export interface FrontEndExample extends TuiDocExample {}

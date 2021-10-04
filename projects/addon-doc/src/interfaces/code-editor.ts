@@ -1,5 +1,7 @@
+import {TuiDocExampleProcessed} from './page';
+
 export interface CodeEditor {
     readonly name: string;
 
-    open(component: string, sampleId: string, files: Record<string, string>): void;
+    open(component: string, sampleId: string, files: TuiDocExampleProcessed): void;
 }

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {CodeEditor} from '@taiga-ui/addon-doc';
+import {CodeEditor, TuiDocExampleProcessed} from '@taiga-ui/addon-doc';
 
 import {default as angularJson} from '!!raw-loader!./project-files/angular.txt';
 import {default as indexHtml} from '!!raw-loader!./project-files/src/index.html';
@@ -9,8 +9,6 @@ import {default as styles} from '!!raw-loader!./project-files/src/styles.less';
 import {default as tsconfig} from '!!raw-loader!./project-files/tsconfig.txt';
 
 import {default as appModuleTs} from '!!raw-loader!./project-files/src/app/app.module.ts.txt';
-
-import {FrontEndExample} from '../../interfaces/front-end-example';
 
 import stackblitz from '@stackblitz/sdk';
 
@@ -75,7 +73,7 @@ function prepareLess(content: string): string {
 export class StackblitzService implements CodeEditor {
     readonly name = 'Stackblitz';
 
-    open(component: string, sampleId: string, content: FrontEndExample) {
+    open(component: string, sampleId: string, content: TuiDocExampleProcessed) {
         if (!content.HTML || !content.TypeScript) {
             return;
         }
