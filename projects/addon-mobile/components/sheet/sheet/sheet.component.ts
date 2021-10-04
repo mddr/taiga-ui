@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import {WINDOW} from '@ng-web-apis/common';
 import {EMPTY_QUERY, tuiPure, tuiZonefull, typedFromEvent} from '@taiga-ui/cdk';
-import {tuiSlideInTop, tuiZonefulMap} from '@taiga-ui/core';
+import {tuiSlideInTop} from '@taiga-ui/core';
 import {TUI_MORE_WORD} from '@taiga-ui/kit';
 import {asCallable} from '@tinkoff/ng-event-plugins';
 import {merge, Observable} from 'rxjs';
@@ -23,7 +23,7 @@ import {TuiSheet} from '../sheet';
 import {TUI_SHEET_CLOSE, TUI_SHEET_ID} from './sheet-heading/sheet-heading.component';
 import {TUI_SHEET_PROVIDERS, TUI_SHEET_SCROLL} from './sheet.providers';
 
-// So that overlay appears a little ahead of time
+// Per design top margin
 const OFFSET = 16;
 
 @Component({
@@ -56,27 +56,18 @@ export class TuiSheetComponent<T> implements AfterViewInit {
 
     id = '';
 
-    @HostBinding('$.class._overlay')
-    @HostListener('$.class._overlay')
-    readonly overlay$ = asCallable(
-        this.scroll$.pipe(
-            filter(() => !this.item.overlay),
-            tuiZonefulMap(scrollTop => this.isOverlayVisible(scrollTop), this.ngZone),
-        ),
-    );
-
     @HostBinding('$.style.height.px')
     @HostListener('$.style.height.px')
     readonly height$ = asCallable(
         typedFromEvent(this.windowRef, 'resize').pipe(
             startWith(null),
-            map(() => this.windowRef.innerHeight - 16),
+            map(() => this.windowRef.innerHeight - OFFSET),
         ),
     );
 
-    readonly stuck$ = this.scroll$.pipe(
-        tuiZonefulMap(scrollTop => scrollTop > this.contentTop + 1, this.ngZone),
-    );
+    @HostBinding('$.class._stuck')
+    @HostListener('$.class._stuck')
+    readonly stuck$ = this.scroll$.pipe(map(y => y > this.contentTop + 1));
 
     @ViewChild('sheet')
     private readonly sheet?: ElementRef<HTMLElement>;
@@ -103,6 +94,10 @@ export class TuiSheetComponent<T> implements AfterViewInit {
         return (this.item.imageSlide && this.stops[this.stops.length - 1]) || 0;
     }
 
+    get imageHeight(): number {
+        return this.contentTop - this.sheetTop;
+    }
+
     ngAfterViewInit() {
         const stops = [...this.stops, this.sheetTop, this.contentTop];
 
@@ -114,14 +109,8 @@ export class TuiSheetComponent<T> implements AfterViewInit {
         this.id = id;
     }
 
-    onTouched(clickthrough: boolean, id: number) {
+    onTouched(clickthrough: boolean) {
         this.clickthrough = clickthrough;
-
-        if (clickthrough) {
-            this.elementRef.nativeElement.releasePointerCapture(id);
-        } else {
-            this.elementRef.nativeElement.setPointerCapture(id);
-        }
     }
 
     scrollTo(top: number = this.sheetTop) {
@@ -134,10 +123,6 @@ export class TuiSheetComponent<T> implements AfterViewInit {
 
     private get sheetTop(): number {
         return this.sheet?.nativeElement.offsetTop ?? Infinity;
-    }
-
-    private isOverlayVisible(scrollTop: number): boolean {
-        return scrollTop + OFFSET > this.sheetTop;
     }
 
     private shouldClose(scrollTop: number): boolean {

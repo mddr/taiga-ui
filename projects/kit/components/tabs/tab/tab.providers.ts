@@ -3,7 +3,6 @@ import {ElementRef, InjectionToken, Optional, Provider} from '@angular/core';
 import {RouterLinkActive} from '@angular/router';
 import {MutationObserverService} from '@ng-web-apis/mutation-observer';
 import {
-    identity,
     tuiCustomEvent,
     TuiDestroyService,
     TuiFocusVisibleService,
@@ -49,7 +48,7 @@ export function tabActiveFactory(
 
     return merge(
         mutationObserver,
-        routerLinkActiveService.pipe(filter(identity)),
+        routerLinkActiveService.pipe(filter(Boolean)),
         nativeElement.matches('button') ? typedFromEvent(nativeElement, 'click') : EMPTY,
     ).pipe(
         map(() =>

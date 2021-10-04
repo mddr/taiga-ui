@@ -10,8 +10,8 @@
     #sheet
     class="t-wrapper"
     [class.t-wrapper_shadow]="!item.image"
-    (pointerdown)="onTouched(false, $event.pointerId)"
-    (pointerup)="onTouched(true, $event.pointerId)"
+    (touchstart)="onTouched(false)"
+    (touchend)="onTouched(true)"
 >
     <header
         *ngIf="item.image"
@@ -25,8 +25,8 @@
             <img [src]="content" alt="" class="t-image" />
         </ng-template>
     </header>
-    <section #content class="t-sheet" [class.t-sheet_stuck]="stuck$ | async">
-        <tui-sheet-bar [stop]="stops[0] || 0">
+    <section #content class="t-sheet">
+        <tui-sheet-bar>
             <button
                 class="t-bar"
                 [title]="moreWord$ | async"

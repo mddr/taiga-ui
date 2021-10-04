@@ -6,7 +6,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: 100vh;
+    height: 100%;
     border-radius: 0.75rem 0.75rem 0 0;
     overflow-y: auto;
     overflow-x: hidden;
@@ -14,6 +14,14 @@
 
     &._clickthrough {
         pointer-events: none;
+    }
+
+    :host-context(._ios) {
+        pointer-events: auto;
+
+        &._stuck {
+            scroll-snap-type: none;
+        }
     }
 }
 

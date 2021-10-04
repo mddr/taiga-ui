@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import {
     EMPTY_QUERY,
-    identity,
     isPresent,
     itemsQueryListObservable,
     tuiDefaultProp,
@@ -58,7 +57,7 @@ export class TuiAccordionComponent implements AfterContentInit {
                 switchMap(rows =>
                     merge(
                         ...rows.map(row =>
-                            row.openChange.pipe(filter(identity), mapTo(row)),
+                            row.openChange.pipe(filter(Boolean), mapTo(row)),
                         ),
                     ),
                 ),

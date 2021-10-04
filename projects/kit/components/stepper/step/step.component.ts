@@ -7,12 +7,7 @@ import {
     Inject,
     Input,
 } from '@angular/core';
-import {
-    identity,
-    tuiDefaultProp,
-    TuiDestroyService,
-    TuiFocusVisibleService,
-} from '@taiga-ui/cdk';
+import {tuiDefaultProp, TuiDestroyService, TuiFocusVisibleService} from '@taiga-ui/cdk';
 import {TuiRouterLinkActiveService} from '@taiga-ui/core';
 import {Observable} from 'rxjs';
 import {filter} from 'rxjs/operators';
@@ -48,7 +43,7 @@ export class TuiStepComponent {
         @Inject(TuiStepperComponent) private readonly stepper: TuiStepperComponent,
         @Inject(ElementRef) private readonly elementRef: ElementRef<HTMLElement>,
     ) {
-        routerLinkActive$.pipe(filter(identity)).subscribe(() => {
+        routerLinkActive$.pipe(filter(Boolean)).subscribe(() => {
             this.activate();
         });
 
